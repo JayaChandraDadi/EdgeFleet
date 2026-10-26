@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>io.edgefleet</groupId>
+    <artifactId>edgefleet</artifactId>
+    <version>0.1.0</version>
+  </parent>
+
+  <artifactId>device-sim</artifactId>
+  <name>EdgeFleet :: Device Simulator</name>
+  <description>Simulated edge routers: zero-touch claim, mTLS control session, apply-with-confirm.</description>
+
+  <dependencies>
+    <dependency>
+      <groupId>io.edgefleet</groupId>
+      <artifactId>edgefleet-proto</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.edgefleet</groupId>
+      <artifactId>config-model</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.grpc</groupId>
+      <artifactId>grpc-netty-shaded</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.bouncycastle</groupId>
+      <artifactId>bcpkix-jdk18on</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>info.picocli</groupId>
+      <artifactId>picocli</artifactId>
+      <version>4.7.7</version>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-maven-plugin</artifactId>
+        <configuration>
+          <mainClass>io.edgefleet.sim.DeviceSimulator</mainClass>
+          <!-- also used as a library by the controller's integration tests -->
+          <classifier>exec</classifier>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>

@@ -1,0 +1,37 @@
+server:
+  port: ${HTTP_PORT:8090}
+
+spring:
+  application:
+    name: edgefleet-controller
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/edgefleet}
+    username: ${DB_USER:edgefleet}
+    password: ${DB_PASSWORD:edgefleet}
+    hikari:
+      maximum-pool-size: ${DB_POOL:20}
+  threads:
+    virtual:
+      enabled: true
+
+edgefleet:
+  pki-dir: ${PKI_DIR:./.edgefleet/pki}
+  tls-hostnames: ${TLS_HOSTNAMES:localhost,127.0.0.1}
+  bootstrap-port: ${BOOTSTRAP_PORT:50051}
+  session-port: ${SESSION_PORT:50052}
+  session-target: ${SESSION_TARGET:localhost:50052}
+  drift-auto-remediate: ${DRIFT_AUTO_REMEDIATE:true}
+  dev:
+    # Runs PostgreSQL in-process (no Docker). docker-compose sets this to false.
+    embedded-postgres: ${EMBEDDED_POSTGRES:true}
+    data-dir: ${EMBEDDED_PG_DIR:./.edgefleet/pgdata}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+
+logging:
+  level:
+    io.zonky: WARN

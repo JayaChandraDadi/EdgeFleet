@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-parent</artifactId>
+    <version>4.1.2</version>
+    <relativePath/>
+  </parent>
+
+  <groupId>io.edgefleet</groupId>
+  <artifactId>edgefleet</artifactId>
+  <version>0.1.0</version>
+  <packaging>pom</packaging>
+  <name>EdgeFleet</name>
+  <description>Zero-touch onboarding and configuration controller for a fleet of edge routers</description>
+
+  <modules>
+    <module>proto</module>
+    <module>config-model</module>
+    <module>device-sim</module>
+    <module>controller</module>
+  </modules>
+
+  <properties>
+    <java.version>21</java.version>
+    <grpc.version>1.85.1</grpc.version>
+    <protobuf.version>4.36.2</protobuf.version>
+    <bouncycastle.version>1.86</bouncycastle.version>
+    <zonky.version>2.2.2</zonky.version>
+    <postgres-binaries.version>18.6.0</postgres-binaries.version>
+  </properties>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>io.grpc</groupId>
+        <artifactId>grpc-bom</artifactId>
+        <version>${grpc.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>io.zonky.test.postgres</groupId>
+        <artifactId>embedded-postgres-binaries-bom</artifactId>
+        <version>${postgres-binaries.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>com.google.protobuf</groupId>
+        <artifactId>protobuf-java</artifactId>
+        <version>${protobuf.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.bouncycastle</groupId>
+        <artifactId>bcpkix-jdk18on</artifactId>
+        <version>${bouncycastle.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.zonky.test</groupId>
+        <artifactId>embedded-postgres</artifactId>
+        <version>${zonky.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.edgefleet</groupId>
+        <artifactId>edgefleet-proto</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.edgefleet</groupId>
+        <artifactId>config-model</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+</project>

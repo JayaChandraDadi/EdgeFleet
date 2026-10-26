@@ -1,0 +1,14 @@
+{
+  "name": "branch",
+  "comment": "Branch edge: MPLS + business internet, BFD 1s x 7",
+  "body": {
+    "system": {"hostname": "{{hostname}}", "systemIp": "{{system_ip}}", "siteId": "{{site_id}}", "region": "{{region}}"},
+    "transports": [
+      {"color": "mpls", "interface": "{{mpls_if}}", "mtu": 1500, "restrict": true},
+      {"color": "biz-internet", "interface": "{{inet_if}}", "mtu": 1500, "restrict": false}
+    ],
+    "bfd": {"helloIntervalMs": 1000, "multiplier": 7},
+    "ntp": ["10.0.0.10", "10.0.0.11"],
+    "banner": "Authorized access only"
+  }
+}

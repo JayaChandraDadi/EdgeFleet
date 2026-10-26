@@ -1,0 +1,44 @@
+# docker compose up --build
+#   controller REST  http://localhost:8090   bootstrap (TLS) :50051   sessions (mTLS) :50052
+#   dashboard        http://localhost:3001
+# Simulated devices run from the host; see README.
+services:
+  postgres:
+    image: postgres:18
+    environment:
+      POSTGRES_DB: edgefleet
+      POSTGRES_USER: edgefleet
+      POSTGRES_PASSWORD: edgefleet
+    volumes:
+      - pgdata:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U edgefleet"]
+      interval: 3s
+      retries: 20
+
+  controller:
+    build: { context: ., dockerfile: Dockerfile.java, args: { MODULE: controller } }
+    environment:
+      EMBEDDED_POSTGRES: "false"
+      DB_URL: jdbc:postgresql://postgres:5432/edgefleet
+      PKI_DIR: /var/lib/edgefleet/pki
+      TLS_HOSTNAMES: localhost,127.0.0.1,controller
+      SESSION_TARGET: localhost:50052
+    volumes:
+      - pki:/var/lib/edgefleet/pki
+    ports:
+      - "8090:8090"
+      - "50051:50051"
+      - "50052:50052"
+    depends_on:
+      postgres: { condition: service_healthy }
+
+  dashboard:
+    build: ./dashboard
+    ports:
+      - "3001:80"
+    depends_on: [controller]
+
+volumes:
+  pgdata:
+  pki:

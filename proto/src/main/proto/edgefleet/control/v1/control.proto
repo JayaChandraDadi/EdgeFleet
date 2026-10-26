@@ -1,0 +1,97 @@
+syntax = "proto3";
+
+package edgefleet.control.v1;
+
+option java_multiple_files = true;
+option java_package = "io.edgefleet.control.v1";
+
+// ---------------------------------------------------------------------------
+// Bootstrap: zero-touch onboarding. Served over TLS with server authentication
+// only, because a new device has no certificate yet. The device proves it is
+// expected with its serial number and a one-time bootstrap token from the
+// provisioning file, and sends a CSR for a key pair it generated itself; the
+// private key never leaves the device.
+// ---------------------------------------------------------------------------
+service Bootstrap {
+  rpc Claim(ClaimRequest) returns (ClaimResponse);
+}
+
+message ClaimRequest {
+  string serial = 1;
+  string model = 2;
+  string bootstrap_token = 3;
+  bytes csr_der = 4;            // PKCS#10, subject CN must equal serial
+}
+
+message ClaimResponse {
+  bytes certificate_der = 1;    // device identity, issued by the controller CA
+  string system_ip = 2;
+  uint32 site_id = 3;
+  string hostname = 4;
+  string session_target = 5;    // where to open the mTLS control session
+}
+
+// ---------------------------------------------------------------------------
+// Control session: one long-lived bidirectional stream per device over mTLS.
+// The device's identity comes from its client certificate, never from message
+// fields, so a device can only ever speak for itself.
+// ---------------------------------------------------------------------------
+service ControlSession {
+  rpc Connect(stream DeviceMessage) returns (stream ControllerMessage);
+}
+
+message DeviceMessage {
+  oneof msg {
+    Hello hello = 1;
+    ConfigResult result = 2;
+    Heartbeat heartbeat = 3;
+  }
+}
+
+// First message on every session.
+message Hello {
+  uint64 applied_version = 1;   // config version the device is running (0 = day-0)
+  string running_hash = 2;      // canonical SHA-256 of the running config
+  string software_version = 3;
+}
+
+message Heartbeat {
+  uint64 applied_version = 1;
+  string running_hash = 2;
+  bool healthy = 3;             // tunnels up, control connections established
+}
+
+// Outcome of one ConfigPush.
+message ConfigResult {
+  string command_id = 1;
+  uint64 version = 2;
+  Status status = 3;
+  string detail = 4;
+  uint64 running_version = 5;   // version running after the attempt
+  string running_hash = 6;
+
+  enum Status {
+    STATUS_UNSPECIFIED = 0;
+    APPLIED_HEALTHY = 1;        // applied and health check passed
+    REJECTED = 2;               // device refused the config (validation), nothing changed
+    HEALTH_CHECK_FAILED = 3;    // applied, health failed, device reverted to previous config
+    STALE_VERSION = 4;          // version not newer than the running one; ignored
+  }
+}
+
+message ControllerMessage {
+  oneof msg {
+    ConfigPush push = 1;
+  }
+}
+
+// Apply-with-confirm: the device applies the config, runs its health check, and
+// reverts on its own if the check fails within health_timeout_sec. A bad config
+// therefore cannot strand a device that the controller can no longer reach.
+message ConfigPush {
+  string command_id = 1;
+  uint64 version = 2;           // strictly increasing per device; older pushes are ignored
+  string config_json = 3;
+  string config_hash = 4;
+  uint32 health_timeout_sec = 5;
+}

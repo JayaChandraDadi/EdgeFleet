@@ -1,0 +1,36 @@
+{
+  "devices": 500,
+  "onboarding": {
+    "allInSyncSeconds": 29.7,
+    "claims": "claim p50 2228ms p99 7063ms"
+  },
+  "rollout": {
+    "batches": [
+      5,
+      25,
+      100
+    ],
+    "completedSeconds": 5.1
+  },
+  "badConfig": {
+    "haltedAndRolledBackSeconds": 2.5,
+    "devicesTouched": 25,
+    "reason": "batch 1: 25 of 25 devices failed (limit 5%)"
+  },
+  "drift": {
+    "edited": 20,
+    "detected": 20,
+    "remediated": 20,
+    "detectP50s": 0.01,
+    "detectMaxS": 0.02,
+    "inSyncAgainP50s": 0.21,
+    "inSyncAgainMaxS": 0.33
+  },
+  "controllerKill": {
+    "downSeconds": 20,
+    "servingAfterKillSeconds": 33.1,
+    "rolloutCompletedAfterKillSeconds": 63.9,
+    "allResyncedAfterKillSeconds": 64.0,
+    "reconnectAttempts": 3112
+  }
+}

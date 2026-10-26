@@ -1,0 +1,10 @@
+target/
+node_modules/
+dashboard/dist/
+.e2e/
+.edgefleet/
+*.log
+.idea/
+.vscode/
+*.iml
+.DS_Store
